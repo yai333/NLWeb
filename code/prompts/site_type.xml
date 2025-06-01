@@ -268,5 +268,104 @@
       </returnStruc>
     </Prompt>
   </RealEstate>
+  
+  <Product>
+    <Prompt ref="DetectItemTypePrompt">
+      <promptString>
+        The user query is: "{request.query}".
+        What kind of item is the user most likely seeking? Consider a physical product or service they might buy.
+        If it's a product, simply return "Product". If it's something else, try to be specific (e.g., Recipe, Movie, Event).
+      </promptString>
+      <returnStruc>
+        {
+          "item_type": ""
+        }
+      </returnStruc>
+    </Prompt>
 
+    <Prompt ref="RankingPrompt">
+      <promptString>
+        Assign a score between 0 and 100 to the following Product
+        based on how relevant it is to the user's question. Use your knowledge from other sources, about the item, to make a judgement.
+        If the score is above 50, provide a short description of the item highlighting its relevance to the user's question, without mentioning the user's question.
+        Provide an explanation of the relevance of the item to the user's question, without mentioning the user's question or the score or explicitly mentioning the term relevance.
+        If the score is below 75, in the description, include the reason why it is still relevant.
+        The user's question is: "{request.query}". The product's description in schema.org format is "{item.description}".
+        Focus on matching details like name, description, brand, category, keywords (tags), price, and availability.
+      </promptString>
+      <returnStruc>
+        {
+          "score": "integer between 0 and 100",
+          "description": "short description of the item"
+        }
+      </returnStruc>
+    </Prompt>
+
+    <Prompt ref="RankingPromptForGenerate">
+      <promptString>
+        Assign a score between 0 and 100 to the following Product
+        based on how useful it might be to answering the user's question.
+        The user's question is: "{request.query}".
+        The product in schema.org format is: "{item.description}". Include a
+        short description of the product in the description field, focusing on its name, key features, and price.
+      </promptString>
+      <returnStruc>
+        {
+          "score" : "integer between 0 and 100",
+          "description" : "short description of the item"
+        }
+      </returnStruc>
+    </Prompt>
+
+    <Prompt ref="SynthesizePromptForGenerate">
+      <promptString>
+        Given the following Products, synthesize an answer to the user's question.
+        You do not need to include all the items, but you should include the most relevant ones.
+        For each of the Products included in the answer, provide the URL of the item in
+        the 'urls' field of the structured output. Make sure to include
+        the URL for every one of the items. Do not include the URL in the answer field.
+        Focus on key product details like price, availability, brand, features, and how they relate to the query.
+        The user's question is: {request.query}.
+        The products are: {request.answers}.
+      </promptString>
+      <returnStruc>
+        {
+          "answer" : "string",
+          "urls" : "urls of the items included in the answer"
+        }
+      </returnStruc>
+    </Prompt>
+
+     <Prompt ref="SummarizeResultsPrompt">
+      <promptString>
+        Given the following Products, summarize the results as an answer to the user's question.
+        The user's question is: {request.query}.
+        The products are: {request.answers}.
+        Focus on common themes, brands, price ranges, categories, or key features among the products found.
+      </promptString>
+      <returnStruc>
+        {
+          "summary" : "string"
+        }
+      </returnStruc>
+    </Prompt>
+
+    <Prompt ref="DescriptionPromptForGenerate">
+      <promptString>
+        The Product with the following description is used to answer the user's question.
+        Please provide a concise description of the Product, in the context of the user's question
+        and the overall answer.
+        The user's question is: {request.query}.
+        The overall answer is: {request.answer}.
+        The product is: {item.description}.
+        Focus on its name, key features, purpose, price, and how it directly relates to the query.
+      </promptString>
+      <returnStruc>
+        {
+          "description" : "string"
+        }
+      </returnStruc>
+    </Prompt>
+
+  </Product>
 </root>
